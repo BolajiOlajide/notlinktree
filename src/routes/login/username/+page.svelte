@@ -9,6 +9,12 @@
     let isAvailable: boolean = false;
     let debounceTimer: NodeJS.Timeout;
 
+    const re = /^(?=[a-zA-Z0-9._]{3,16}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+
+    $: isValid = username.length > 2 && username.length < 16 && re.test(username);
+    $: isTouched = username.length > 0;
+    $: isTaken = isValid && !isAvailable && !loading
+
     async function checkAvailability() {
         isAvailable = false;
         loading = true;
@@ -54,10 +60,34 @@
     <h2>Username</h2>
 
     <form class="w-2/5" on:submit|preventDefault={confirmUsername}>
-        <input on:input={checkAvailability} type="text" bind:value={username} placeholder="Username" class="input w-full" />
+        <input 
+            on:input={checkAvailability} 
+            type="text" 
+            bind:value={username} 
+            placeholder="Username" 
+            class="input w-full" 
+            class:input-error={(!isValid && isTouched && !loading)}
+            class:input-warning={isTaken}
+            class:input-success={isAvailable && isValid && !loading}
+        />
 
-        <p class="my-4">Is available? {isAvailable}</p>
+        <div class="my-4 min-h-16 px-8 w-full">
+            {#if !isValid && isTouched}
+                <p class="text-error text-sm">must be 3-16 characters long, alphanumeric only</p>
+            {/if}
 
-        <button class="btn btn-success">Confirm username @{username} </button>
+            {#if loading}
+                <span class="loading loading-spinner loading-lg"></span>
+                <p class="text-secondary">Checking availability of @{username}</p>
+            {/if}
+
+            {#if isValid && !isAvailable && !loading}
+                <p class="text-warning text-sm">@{username} is not available</p>
+            {/if}
+        </div>
+
+        {#if isAvailable}
+            <button class="btn btn-success my-2">Confirm username @{username} </button>
+        {/if}
     </form>
 </AuthCheck>
