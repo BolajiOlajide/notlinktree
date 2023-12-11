@@ -6,6 +6,6 @@
 
 <nav>
     <a href="/">Home</a>
-    <h1>Welcome {data}</h1>
+    <h1>Welcome {JSON.stringify(data)}</h1>
 </nav>
 <slot />
