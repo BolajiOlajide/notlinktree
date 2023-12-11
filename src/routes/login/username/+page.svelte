@@ -1,7 +1,7 @@
 <script lang="ts">
     import AuthCheck from "$lib/components/AuthCheck.svelte";
     import { db } from "$lib/firebase";
-    import { user } from "$lib/stores/user.store"
+    import { user, userData } from "$lib/stores/user.store"
     import { doc, getDoc, writeBatch } from "firebase/firestore";
 
     let username: string = "";
@@ -57,8 +57,11 @@
 </script>
 
 <AuthCheck>
-    <h2>Username</h2>
-
+    {#if $userData?.username}
+        <p>Your username is <span>@{$userData.username}</span></p>
+        <p>(Usernames cannot be changed)</p>
+        <a href="/login/photo">Upload Profile Image</a>
+    {:else}
     <form class="w-2/5" on:submit|preventDefault={confirmUsername}>
         <input 
             on:input={checkAvailability} 
@@ -90,4 +93,5 @@
             <button class="btn btn-success my-2">Confirm username @{username} </button>
         {/if}
     </form>
+    {/if}    
 </AuthCheck>

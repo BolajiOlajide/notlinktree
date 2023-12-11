@@ -1,7 +1,8 @@
-import { writable } from 'svelte/store';
+import { derived, writable, type Readable } from 'svelte/store';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 
 import { auth } from '$lib/firebase';
+import { docStore } from './doc.store';
 
 /**
  * @returns a store with the current firebase user
@@ -27,3 +28,18 @@ function userStore() {
 };
 
 export const user = userStore();
+
+interface UserData {
+    username: string;
+    bio: string;
+    photoURL: string;
+    links: any[];
+}
+
+export const userData: Readable<UserData | null> = derived(user, ($user, set) => {
+    if ($user) {
+        return docStore<UserData>(`users/${$user.uid}`).subscribe(set);
+    } else {
+        set(null);
+    }
+})
