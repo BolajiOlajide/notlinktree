@@ -8,7 +8,6 @@
         const provider = new GoogleAuthProvider();
         const credential = await signInWithPopup(auth, provider);
         const idToken = await credential.user.getIdToken();
-        console.log('id token', idToken)
 
         const res = await fetch('/api/signin', {
             method: 'POST',
@@ -18,7 +17,6 @@
             },
             body: JSON.stringify({ idToken })
         })
-        console.log(res);
     }
     
     async function signOutSSR() {

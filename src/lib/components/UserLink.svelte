@@ -2,8 +2,6 @@
     export let icon = 'default';
     export let url = 'foo';
     export let title = 'some cool title';
-
-    console.log({ icon, url, title })
 </script>
 
 
